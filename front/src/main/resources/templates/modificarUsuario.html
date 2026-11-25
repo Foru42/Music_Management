@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Bar Labea · Mi perfil</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Instrument+Sans:wght@400;500;600&display=swap"
+        rel="stylesheet">
+
+    <link rel="stylesheet" th:href="@{/styles/cancion.css}">
+</head>
+
+<body>
+
+    <nav class="topbar" aria-label="Navegación">
+        <a class="topbar__perfil" th:href="@{/canciones}" title="Volver a las canciones">
+            <span class="topbar__user">← Canciones</span>
+        </a>
+    </nav>
+
+    <header class="hero">
+        <div class="hero__text">
+            <h1>Tu perfil<br>en Labea</h1>
+            <p>Cambia tu foto y tus preguntas de recuperación. Así te verán en las canciones que subas.</p>
+        </div>
+        <div class="vinyl vinyl--hero" aria-hidden="true"><span></span></div>
+    </header>
+
+    <main class="library">
+
+        <p class="empty" th:if="${f_mensaje != null}" th:text="${f_mensaje}">Mensaje</p>
+
+        <section class="edit">
+            <form th:action="@{/usuario/modificar}" method="post" enctype="multipart/form-data"
+                class="modal modal__form edit__form">
+
+                <h2>Modificar perfil</h2>
+
+                <!-- Foto -->
+                <div class="perfil__foto-bloque">
+                    <img id="previa" class="perfil__foto"
+                        th:if="${usuario.foto != null and !#strings.isEmpty(usuario.foto)}"
+                        th:src="@{'/imagenes/' + ${usuario.foto}}" alt="Mi foto de perfil">
+
+                    <span id="previaVacia" class="perfil__foto perfil__foto--vacio"
+                        th:unless="${usuario.foto != null and !#strings.isEmpty(usuario.foto)}"
+                        th:text="${#strings.toUpperCase(#strings.substring(usuario.user, 0, 1))}">?</span>
+
+                    <label class="perfil__subir">Cambiar foto
+                        <input type="file" name="archivoFoto" id="archivoFoto" accept="image/*">
+                    </label>
+                </div>
+
+                <label>Usuario
+                    <input type="text" th:value="${usuario.user}" readonly disabled>
+                </label>
+
+                <!-- Preguntas de recuperación -->
+                <fieldset class="perfil__preguntas">
+                    <legend>Preguntas de recuperación</legend>
+                    <p class="perfil__ayuda">Elige una pregunta y escribe la respuesta. Si dejas la respuesta vacía, esa
+                        pregunta no se modifica.</p>
+
+                    <div class="perfil__pregunta" th:each="i : ${#numbers.sequence(0, 2)}"
+                        th:with="actual=${usuario.preguntas != null and #lists.size(usuario.preguntas) > i ? usuario.preguntas[i] : null}">
+
+                        <input type="hidden" th:if="${actual != null}" th:name="|preguntas[${i}].id|"
+                            th:value="${actual.id}">
+
+                        <label>Pregunta <span th:text="${i + 1}">1</span>
+                            <select th:name="|preguntas[${i}].preguntaId|">
+                                <option value="">Elige una pregunta</option>
+                                <option th:each="p : ${preguntas}" th:value="${p.id}" th:text="${p.texto}"
+                                    th:selected="${actual != null and actual.preguntaId == p.id}">¿Pregunta?</option>
+                            </select>
+                        </label>
+
+                        <label>Respuesta
+                            <input type="text" th:name="|preguntas[${i}].respuesta|" maxlength="100" autocomplete="off"
+                                th:placeholder="${actual != null} ? 'Déjala vacía para no cambiarla' : 'Tu respuesta'">
+                        </label>
+                    </div>
+                </fieldset>
+
+                <div class="modal__buttons">
+                    <a class="btn btn--ghost" th:href="@{/canciones}">Cancelar</a>
+                    <button type="submit" class="btn btn--primary">Guardar cambios</button>
+                </div>
+            </form>
+        </section>
+
+    </main>
+
+    <script>
+        // Vista previa de la foto
+        const input = document.getElementById('archivoFoto');
+        input.addEventListener('change', () => {
+            const file = input.files[0];
+            if (!file) return;
+
+            let img = document.getElementById('previa');
+            const vacia = document.getElementById('previaVacia');
+
+            if (!img) {
+                img = document.createElement('img');
+                img.id = 'previa';
+                img.className = 'perfil__foto';
+                img.alt = 'Vista previa';
+                vacia.replaceWith(img);
+            }
+            img.src = URL.createObjectURL(file);
+        });
+
+        // Evitar preguntas repetidas
+        const selects = document.querySelectorAll('.perfil__pregunta select');
+        document.querySelector('.edit__form').addEventListener('submit', e => {
+            const usadas = [...selects].map(s => s.value).filter(v => v);
+            if (new Set(usadas).size !== usadas.length) {
+                e.preventDefault();
+                alert('No puedes repetir la misma pregunta.');
+            }
+        });
+    </script>
+
+</body>
+
+</html>

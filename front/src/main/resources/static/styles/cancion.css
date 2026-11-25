@@ -1,0 +1,879 @@
+:root {
+    --bg: #1c1226;
+    --surface: #2a1c38;
+    --surface-2: #38264a;
+    --text: #f6efe6;
+    --muted: #b9a9c9;
+    --amber: #ffbf3c;
+    --pink: #ff5c8a;
+    --line: rgba(246, 239, 230, .14);
+    --radius: 18px;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+}
+
+body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: "Instrument Sans", system-ui, sans-serif;
+    line-height: 1.5;
+    min-height: 100vh;
+}
+
+h1,
+h2 {
+    font-family: "Bricolage Grotesque", sans-serif;
+    letter-spacing: -.02em;
+}
+
+:focus-visible {
+    outline: 3px solid var(--amber);
+    outline-offset: 2px;
+}
+
+/* ---------- Hero ---------- */
+.hero {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 4rem 1.5rem 2.5rem;
+    overflow: hidden;
+}
+
+.hero h1 {
+    font-size: clamp(2.8rem, 8vw, 5.5rem);
+    font-weight: 800;
+    line-height: .95;
+}
+
+.hero p {
+    color: var(--muted);
+    max-width: 42ch;
+    margin: 1.2rem 0 1.8rem;
+}
+
+/* ---------- Discos ---------- */
+.vinyl {
+    --h: 330;
+    position: relative;
+    flex: none;
+    width: 84px;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background:
+        radial-gradient(circle, transparent 0 22%, rgba(0, 0, 0, .55) 23% 24%, transparent 25%),
+        repeating-radial-gradient(circle, #14091c 0 2px, #231230 3px 4px);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, .45);
+}
+
+.vinyl span {
+    position: absolute;
+    inset: 33%;
+    border-radius: 50%;
+    background: hsl(var(--h) 85% 62%);
+}
+
+.vinyl span::after {
+    content: "";
+    position: absolute;
+    inset: 42%;
+    border-radius: 50%;
+    background: var(--bg);
+}
+
+.vinyl--hero {
+    --h: 40;
+    width: min(320px, 38vw);
+    animation: spin 9s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* ---------- Toolbar ---------- */
+.library {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 1.5rem 4rem;
+}
+
+.toolbar {
+    display: grid;
+    gap: 1rem;
+    margin-bottom: 1.8rem;
+}
+
+#buscador {
+    width: 100%;
+    padding: .9rem 1.2rem;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--text);
+    font: inherit;
+}
+
+#buscador::placeholder {
+    color: var(--muted);
+}
+
+.chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .5rem;
+}
+
+.chip {
+    padding: .45rem 1rem;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    background: transparent;
+    color: var(--text);
+    font: 500 .9rem "Instrument Sans", sans-serif;
+    cursor: pointer;
+    transition: background .15s, color .15s;
+}
+
+.chip:hover {
+    background: var(--surface-2);
+}
+
+.chip.is-active {
+    background: var(--amber);
+    color: #2a1c00;
+    border-color: var(--amber);
+}
+
+.count {
+    color: var(--muted);
+    font-size: .9rem;
+}
+
+.count strong {
+    color: var(--text);
+}
+
+/* ---------- Canciones ---------- */
+.grid {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+}
+
+.song {
+    --h: 330;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: .9rem 1.1rem;
+    padding: 1.2rem;
+    border-radius: var(--radius);
+    background: var(--surface);
+    border: 1px solid var(--line);
+}
+
+.song[hidden] {
+    display: none;
+}
+
+.song:hover .vinyl {
+    animation: spin 3s linear infinite;
+}
+
+.song h2 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+.song__meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: .6rem;
+    margin: .35rem 0 .5rem;
+    font-size: .85rem;
+    color: var(--muted);
+}
+
+.tag {
+    padding: .1rem .6rem;
+    border-radius: 999px;
+    background: hsl(var(--h) 70% 30%);
+    color: hsl(var(--h) 100% 90%);
+    font-weight: 600;
+}
+
+.flag {
+    color: var(--pink);
+    font-weight: 600;
+}
+
+.song__desc {
+    font-size: .95rem;
+    color: var(--muted);
+}
+
+.song__actions {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-wrap: wrap;
+    gap: .5rem;
+    padding-top: .8rem;
+    border-top: 1px solid var(--line);
+}
+
+.song__actions form {
+    display: contents;
+}
+
+.song.is-reported {
+    border-color: rgba(255, 92, 138, .5);
+}
+
+.song.is-reported .vinyl {
+    filter: grayscale(.8);
+    opacity: .7;
+}
+
+/* ---------- Botones ---------- */
+.btn {
+    display: inline-block;
+    padding: .6rem 1.1rem;
+    border-radius: 999px;
+    border: 1px solid transparent;
+    font: 600 .9rem "Instrument Sans", sans-serif;
+    text-decoration: none;
+    cursor: pointer;
+    transition: transform .12s, background .15s;
+}
+
+.btn:active {
+    transform: scale(.96);
+}
+
+.btn--primary {
+    background: var(--amber);
+    color: #2a1c00;
+    padding: .85rem 1.6rem;
+    font-size: 1rem;
+}
+
+.btn--primary:hover {
+    background: #ffd06b;
+}
+
+.btn--play {
+    background: var(--pink);
+    color: #2b0612;
+    margin-right: auto;
+}
+
+.btn--play:hover {
+    background: #ff7fa3;
+}
+
+.btn--ghost {
+    background: transparent;
+    color: var(--text);
+    border-color: var(--line);
+}
+
+.btn--ghost:hover {
+    background: var(--surface-2);
+}
+
+.btn--danger {
+    background: transparent;
+    color: var(--pink);
+    border-color: rgba(255, 92, 138, .4);
+}
+
+.btn--danger:hover {
+    background: rgba(255, 92, 138, .15);
+}
+
+.empty {
+    text-align: center;
+    color: var(--muted);
+    padding: 3rem 1rem;
+}
+
+.empty[hidden] {
+    display: none;
+}
+
+/* ---------- Modal ---------- */
+.modal {
+    width: min(480px, calc(100% - 2rem));
+    padding: 0;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--surface);
+    color: var(--text);
+}
+
+.modal::backdrop {
+    background: rgba(10, 4, 16, .75);
+    backdrop-filter: blur(3px);
+}
+
+.modal__form {
+    display: grid;
+    gap: 1rem;
+    padding: 1.6rem;
+}
+
+.modal h2 {
+    font-size: 1.6rem;
+}
+
+.modal label {
+    display: grid;
+    gap: .35rem;
+    font-size: .9rem;
+    font-weight: 500;
+    color: var(--muted);
+}
+
+.modal input,
+.modal select,
+.modal textarea {
+    width: 100%;
+    padding: .7rem .9rem;
+    border-radius: 12px;
+    border: 1px solid var(--line);
+    background: var(--bg);
+    color: var(--text);
+    font: 400 1rem "Instrument Sans", sans-serif;
+}
+
+.row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.modal__buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: .6rem;
+}
+
+.modal__buttons .btn--primary {
+    padding: .65rem 1.3rem;
+    font-size: .95rem;
+}
+
+/* ---------- Responsive y movimiento ---------- */
+@media (max-width: 640px) {
+    .hero {
+        flex-direction: column-reverse;
+        align-items: flex-start;
+        padding-top: 2rem;
+    }
+
+    .vinyl--hero {
+        width: 180px;
+    }
+
+    .grid {
+        grid-template-columns: 1fr;
+    }
+
+    .row {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    .vinyl--hero,
+    .song:hover .vinyl {
+        animation: none;
+    }
+}
+
+.cover {
+    position: relative;
+    flex: none;
+    align-self: start;
+}
+
+.avatar {
+    position: absolute;
+    right: -8px;
+    bottom: -8px;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid var(--surface);
+    background: var(--surface-2);
+}
+
+.avatar--vacio {
+    display: grid;
+    place-items: center;
+    color: var(--muted);
+    font-weight: 600;
+    font-size: .85rem;
+}
+
+.edit {
+    display: grid;
+    place-items: start center;
+}
+
+.edit__form {
+    width: min(560px, 100%);
+}
+
+/* ---------- Barra superior / perfil ---------- */
+.topbar {
+    display: flex;
+    justify-content: flex-end;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 1rem 1.5rem 0;
+}
+
+.topbar__perfil {
+    display: inline-flex;
+    align-items: center;
+    gap: .7rem;
+    padding: .3rem .4rem .3rem 1rem;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--text);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: .9rem;
+    transition: background .15s, transform .12s;
+}
+
+.topbar__perfil:hover {
+    background: var(--surface-2);
+}
+
+.topbar__perfil:active {
+    transform: scale(.97);
+}
+
+.topbar__foto {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--amber);
+    background: var(--surface-2);
+}
+
+.topbar__foto--vacio {
+    display: grid;
+    place-items: center;
+    color: var(--amber);
+    font-weight: 700;
+}
+
+@media (max-width: 640px) {
+    .topbar__user {
+        display: none;
+    }
+}
+
+/* ---------- Páginas de edición (canción / perfil) ---------- */
+.edit {
+    display: flex;
+    justify-content: center;
+    margin-top: 1rem;
+}
+
+.edit__form {
+    display: grid;
+    gap: 1.1rem;
+    width: min(560px, 100%);
+    padding: 2rem;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--surface);
+    box-shadow: 0 20px 50px -20px rgba(0, 0, 0, .6);
+}
+
+.edit__form h2 {
+    font-size: 1.8rem;
+}
+
+.edit__form label {
+    display: grid;
+    gap: .4rem;
+    font-size: .9rem;
+    font-weight: 500;
+    color: var(--muted);
+}
+
+.edit__form input,
+.edit__form select,
+.edit__form textarea {
+    width: 100%;
+    padding: .75rem .95rem;
+    border-radius: 12px;
+    border: 1px solid var(--line);
+    background: var(--bg);
+    color: var(--text);
+    font: 400 1rem "Instrument Sans", sans-serif;
+    color-scheme: dark;
+    transition: border-color .15s, box-shadow .15s;
+}
+
+.edit__form textarea {
+    resize: vertical;
+    min-height: 90px;
+}
+
+.edit__form select {
+    appearance: none;
+    padding-right: 2.6rem;
+    cursor: pointer;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none' stroke='%23ffbf3c' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 8l5 5 5-5'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right .8rem center;
+    background-size: 1.1rem;
+}
+
+.edit__form input:focus-visible,
+.edit__form select:focus-visible,
+.edit__form textarea:focus-visible {
+    outline: none;
+    border-color: var(--amber);
+    box-shadow: 0 0 0 3px rgba(255, 191, 60, .3);
+}
+
+.edit__form input[readonly],
+.edit__form input:disabled {
+    opacity: .6;
+    cursor: not-allowed;
+}
+
+.edit__form .modal__buttons {
+    padding-top: .5rem;
+    border-top: 1px solid var(--line);
+}
+
+/* Aviso */
+.aviso {
+    max-width: 560px;
+    margin: 0 auto 1.2rem;
+    padding: .8rem 1rem;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 191, 60, .45);
+    background: rgba(255, 191, 60, .1);
+    color: var(--amber);
+    font-size: .95rem;
+}
+
+/* Hero más compacto en estas páginas */
+.edit~*,
+.hero+.library {
+    margin-top: 0;
+}
+
+@media (max-width: 640px) {
+    .edit__form {
+        padding: 1.4rem;
+    }
+}
+
+/* ---------- Perfil: foto ---------- */
+.perfil__foto-bloque {
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+}
+
+.perfil__foto {
+    flex: none;
+    width: 96px;
+    height: 96px;
+    max-width: 96px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid var(--amber);
+    background: var(--surface-2);
+}
+
+.perfil__foto--vacio {
+    display: grid;
+    place-items: center;
+    color: var(--amber);
+    font: 800 2.4rem "Bricolage Grotesque", sans-serif;
+}
+
+.perfil__subir {
+    flex: 1;
+    min-width: 0;
+}
+
+.perfil__subir input[type="file"] {
+    padding: .5rem;
+    font-size: .85rem;
+    cursor: pointer;
+}
+
+.perfil__subir input[type="file"]::file-selector-button {
+    margin-right: .8rem;
+    padding: .4rem .9rem;
+    border: 0;
+    border-radius: 999px;
+    background: var(--amber);
+    color: #2a1c00;
+    font: 600 .85rem "Instrument Sans", sans-serif;
+    cursor: pointer;
+}
+
+.perfil__error {
+    padding: .6rem .9rem;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 92, 138, .5);
+    color: var(--pink);
+    font-size: .9rem;
+}
+
+.perfil__error[hidden] {
+    display: none;
+}
+
+@media (max-width: 640px) {
+    .perfil__foto-bloque {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .perfil__subir {
+        width: 100%;
+    }
+}
+
+/* ---------- Administración ---------- */
+.topbar--split {
+    justify-content: space-between;
+}
+
+.hero--compacto {
+    padding-top: 2rem;
+    padding-bottom: 1.5rem;
+}
+
+.admin-menu {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.2rem;
+}
+
+.admin-card {
+    display: grid;
+    gap: .6rem;
+    padding: 2rem;
+    border-radius: var(--radius);
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--text);
+    text-decoration: none;
+    transition: transform .15s, background .15s, border-color .15s;
+}
+
+.admin-card:hover {
+    background: var(--surface-2);
+    border-color: var(--amber);
+    transform: translateY(-3px);
+}
+
+.admin-card__icon {
+    display: grid;
+    place-items: center;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: var(--amber);
+    color: #2a1c00;
+    font-size: 1.6rem;
+}
+
+.admin-card h2 {
+    font-size: 1.6rem;
+}
+
+.admin-card p {
+    color: var(--muted);
+}
+
+.filters {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+}
+
+.filters label {
+    display: grid;
+    gap: .35rem;
+    font-size: .85rem;
+    font-weight: 500;
+    color: var(--muted);
+}
+
+.filters input,
+.filters select {
+    width: 100%;
+    padding: .7rem .9rem;
+    border-radius: 12px;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--text);
+    font: 400 1rem "Instrument Sans", sans-serif;
+    color-scheme: dark;
+}
+
+.filters select {
+    appearance: none;
+    padding-right: 2.4rem;
+    cursor: pointer;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none' stroke='%23ffbf3c' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 8l5 5 5-5'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right .8rem center;
+    background-size: 1.1rem;
+}
+
+.song__user {
+    font-size: .85rem;
+    color: var(--muted);
+    margin-bottom: .4rem;
+}
+
+.song__user strong {
+    color: var(--text);
+}
+
+@media (max-width: 800px) {
+    .filters {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    .filters {
+        grid-template-columns: 1fr;
+    }
+}
+
+.filters__buttons {
+    grid-column: 1 / -1;
+    display: flex;
+    gap: .6rem;
+}
+
+/* ---------- Administración: usuarios ---------- */
+.user__foto {
+    width: 84px;
+    height: 84px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid var(--amber);
+    background: var(--surface-2);
+}
+
+.user__foto--vacio {
+    display: grid;
+    place-items: center;
+    color: var(--amber);
+    font: 800 2rem "Bricolage Grotesque", sans-serif;
+}
+
+.song.is-reported .user__foto {
+    filter: grayscale(.8);
+    opacity: .7;
+    border-color: var(--pink);
+}
+
+/* ---------- Conversor YouTube → MP3 ---------- */
+.converter {
+    margin-bottom: 1.8rem;
+}
+
+.converter__form {
+    display: grid;
+    gap: .6rem;
+    padding: 1.2rem;
+    border-radius: var(--radius);
+    border: 1px solid var(--line);
+    background: var(--surface);
+}
+
+.converter__form label {
+    font-family: "Bricolage Grotesque", sans-serif;
+    font-size: 1.25rem;
+    font-weight: 700;
+    letter-spacing: -.02em;
+}
+
+.converter__row {
+    display: flex;
+    gap: .6rem;
+}
+
+.converter__row input {
+    flex: 1;
+    min-width: 0;
+    padding: .8rem 1.2rem;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    background: var(--bg);
+    color: var(--text);
+    font: inherit;
+}
+
+.converter__row input::placeholder {
+    color: var(--muted);
+}
+
+.converter__row .btn--primary {
+    padding: .7rem 1.4rem;
+    font-size: .95rem;
+    white-space: nowrap;
+}
+
+.converter__row .btn:disabled {
+    opacity: .6;
+    cursor: progress;
+}
+
+.converter__msg {
+    font-size: .9rem;
+    color: var(--muted);
+}
+
+.converter__msg.is-ok {
+    color: var(--amber);
+}
+
+.converter__msg.is-error {
+    color: var(--pink);
+}
+
+.converter__msg[hidden] {
+    display: none;
+}
+
+@media (max-width: 640px) {
+    .converter__row {
+        flex-direction: column;
+    }
+}

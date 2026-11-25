@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bar Labea · Entrar</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Instrument+Sans:wght@400;500;600&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/styles/style.css}">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.2.0/crypto-js.min.js"></script>
+</head>
+
+<body>
+    <main class="login">
+
+        <section class="login__panel">
+            <div class="login__box">
+                <h1 class="login__title">Ongi etorri</h1>
+                <p class="login__intro">Entra para ver tus reservas y tus pedidos.</p>
+
+                <form class="form formulario" th:action="@{/login}" method="post" onsubmit="return calcularSha256()">
+
+                    <div class="field">
+                        <label for="nombre">Nombre de Usuario</label>
+                        <input type="text" id="nombre" name="user" autocomplete="username" maxlength="45"
+                            placeholder="Tu usuario" required>
+                    </div>
+
+                    <div class="field">
+                        <label for="pass_sin_hash">Contraseña</label>
+                        <div class="field__password">
+                            <input type="password" id="pass_sin_hash" autocomplete="current-password"
+                                placeholder="Tu contraseña" required>
+                            <button type="button" class="field__toggle" id="toggle"
+                                aria-controls="pass_sin_hash">Ver</button>
+                        </div>
+                        <input type="hidden" id="passHash" name="pass">
+                    </div>
+
+                    <p class="form__error" id="clientError" role="alert" hidden></p>
+                    <p class="form__error" role="alert" th:if="${error != null}" th:text="${error}"></p>
+                    <p class="form__status" role="status" th:if="${mensaje != null}" th:text="${mensaje}"></p>
+
+                    <button type="submit" class="btn" id="submitBtn">
+                        Entrar
+                    </button>
+                </form>
+
+                <p class="login__alt">
+                    ¿Primera vez por aquí?
+                    <a th:href="@{/usuario/nuevo}" class="link link--strong">Crea tu cuenta</a>
+                </p>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        const pw = document.getElementById('pass_sin_hash');
+        const tg = document.getElementById('toggle');
+        const passHash = document.getElementById('passHash');
+        const clientError = document.getElementById('clientError');
+
+        tg.addEventListener('click', () => {
+            const mostrar = pw.type === 'password';
+
+            pw.type = mostrar ? 'text' : 'password';
+            tg.textContent = mostrar ? 'Ocultar' : 'Ver';
+        });
+
+        function calcularSha256() {
+            const texto = pw.value;
+
+            if (texto === '') {
+                passHash.value = '';
+                clientError.textContent = 'Introduce tu contraseña.';
+                clientError.hidden = false;
+                return false;
+            }
+
+            const hash = CryptoJS.SHA256(texto + 'Galea');
+
+            passHash.value = hash.toString(CryptoJS.enc.Hex);
+
+            return true;
+        }
+    </script>
+</body>
+
+</html>

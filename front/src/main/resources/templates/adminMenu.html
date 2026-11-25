@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Bar Labea · Administración</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Instrument+Sans:wght@400;500;600&display=swap"
+        rel="stylesheet">
+
+    <link rel="stylesheet" th:href="@{/styles/cancion.css}">
+</head>
+
+<body>
+
+    <nav class="topbar" aria-label="Usuario">
+        <a class="topbar__perfil" th:href="@{/usuario/perfil}" title="Modificar mi perfil">
+            <span class="topbar__user" th:text="${user_logged.user}">admin</span>
+
+            <img class="topbar__foto" th:if="${user_logged.foto != null and !#strings.isEmpty(user_logged.foto)}"
+                th:src="@{'/imagenes/' + ${user_logged.foto}}" alt="Mi foto de perfil">
+
+            <span class="topbar__foto topbar__foto--vacio"
+                th:unless="${user_logged.foto != null and !#strings.isEmpty(user_logged.foto)}"
+                th:text="${#strings.toUpperCase(#strings.substring(user_logged.user, 0, 1))}">?</span>
+        </a>
+    </nav>
+
+    <header class="hero">
+        <div class="hero__text">
+            <h1>Panel de<br>administración</h1>
+            <p>Controla qué suena en el bar y quién puede ponerlo.</p>
+        </div>
+        <div class="vinyl vinyl--hero" aria-hidden="true"><span></span></div>
+    </header>
+
+    <main class="library">
+
+        <p class="aviso" th:if="${f_mensaje != null}" th:text="${f_mensaje}">Mensaje</p>
+
+        <section class="admin-menu">
+            <a class="admin-card" th:href="@{/admin/canciones}">
+                <span class="admin-card__icon" aria-hidden="true">♫</span>
+                <h2>Gestionar canciones</h2>
+                <p>Revisa todas las canciones, filtra las reportadas, bórralas o banea a quien las subió.</p>
+            </a>
+
+            <a class="admin-card" th:href="@{/admin/usuarios}">
+                <span class="admin-card__icon" aria-hidden="true">☻</span>
+                <h2>Gestionar usuarios</h2>
+                <p>Consulta los usuarios del bar y controla su acceso.</p>
+            </a>
+        </section>
+
+    </main>
+
+</body>
+
+</html>

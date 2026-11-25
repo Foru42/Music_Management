@@ -1,0 +1,52 @@
+{"properties": [
+  {
+    "name": "url.api.usuario",
+    "type": "java.lang.String",
+    "description": "A description for 'url.api.usuario'"
+  },
+  {
+    "name": "url.api.login",
+    "type": "java.lang.String",
+    "description": "A description for 'url.api.login'"
+  },
+  {
+    "name": "ruta.imagenes",
+    "type": "java.lang.String",
+    "description": "A description for 'ruta.imagenes'"
+  },
+  {
+    "name": "url.api.preguntas",
+    "type": "java.lang.String",
+    "description": "A description for 'url.api.preguntas'"
+  },
+  {
+    "name": "url.api.preguntasRespuesta",
+    "type": "java.lang.String",
+    "description": "A description for 'url.api.preguntasRespuesta'"
+  },
+  {
+    "name": "url.api.preguntasRespuesta",
+    "type": "java.lang.String",
+    "description": "A description for 'url.api.preguntasRespuesta'"
+  },
+  {
+    "name": "url.api.preguntasRespuesta",
+    "type": "java.lang.String",
+    "description": "A description for 'url.api.preguntasRespuesta'"
+  },
+  {
+    "name": "url.api.canciones",
+    "type": "java.lang.String",
+    "description": "A description for 'url.api.canciones'"
+  },
+  {
+    "name": "url.api.estilos",
+    "type": "java.lang.String",
+    "description": "A description for 'url.api.estilos'"
+  },
+  {
+    "name": "url.api.mp3",
+    "type": "java.lang.String",
+    "description": "A description for 'url.api.mp3'"
+  }
+]}

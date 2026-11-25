@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Bar Labea · Gestionar canciones</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Instrument+Sans:wght@400;500;600&display=swap"
+        rel="stylesheet">
+
+    <link rel="stylesheet" th:href="@{/styles/cancion.css}">
+</head>
+
+<body>
+
+    <nav class="topbar topbar--split" aria-label="Navegación">
+        <a class="topbar__perfil" th:href="@{/admin}" title="Volver al menú">
+            <span class="topbar__user">← Menú</span>
+        </a>
+
+        <a class="topbar__perfil" th:href="@{/usuario/perfil}" title="Modificar mi perfil">
+            <span class="topbar__user" th:text="${user_logged.user}">admin</span>
+
+            <img class="topbar__foto" th:if="${user_logged.foto != null and !#strings.isEmpty(user_logged.foto)}"
+                th:src="@{'/imagenes/' + ${user_logged.foto}}" alt="Mi foto de perfil">
+
+            <span class="topbar__foto topbar__foto--vacio"
+                th:unless="${user_logged.foto != null and !#strings.isEmpty(user_logged.foto)}"
+                th:text="${#strings.toUpperCase(#strings.substring(user_logged.user, 0, 1))}">?</span>
+        </a>
+    </nav>
+
+    <header class="hero hero--compacto">
+        <div class="hero__text">
+            <h1>Gestionar<br>canciones</h1>
+            <p>Todas las canciones del bar, también las de usuarios baneados.</p>
+        </div>
+        <div class="vinyl vinyl--hero" aria-hidden="true"><span></span></div>
+    </header>
+
+    <main class="library">
+
+        <p class="aviso" th:if="${f_mensaje != null}" th:text="${f_mensaje}">Mensaje</p>
+
+        <section class="toolbar" aria-label="Filtros">
+            <form class="filters" th:action="@{/admin/canciones}" method="get">
+                <label>Usuario
+                    <input type="search" name="usuario" placeholder="Nombre de usuario" th:value="${fUsuario}">
+                </label>
+
+                <label>Estilo
+                    <select name="estilo">
+                        <option value="">Todos</option>
+                        <option th:each="e : ${estilos}" th:value="${e.nombre}" th:text="${e.nombre}"
+                            th:selected="${e.nombre == fEstilo}">Rock</option>
+                    </select>
+                </label>
+
+                <label>Duración
+                    <select name="duracion">
+                        <option value="">Cualquiera</option>
+                        <option value="0-179" th:selected="${fDuracion == '0-179'}">Menos de 3 min</option>
+                        <option value="180-300" th:selected="${fDuracion == '180-300'}">De 3 a 5 min</option>
+                        <option value="301-999999" th:selected="${fDuracion == '301-999999'}">Más de 5 min</option>
+                    </select>
+                </label>
+
+                <label>Reportada
+                    <select name="reportada">
+                        <option value="">Todas</option>
+                        <option value="true" th:selected="${fReportada == 'true'}">Solo reportadas</option>
+                        <option value="false" th:selected="${fReportada == 'false'}">No reportadas</option>
+                    </select>
+                </label>
+
+                <div class="filters__buttons">
+                    <button type="submit" class="btn btn--primary">Filtrar</button>
+                    <a class="btn btn--ghost" th:href="@{/admin/canciones}">Limpiar</a>
+                </div>
+            </form>
+
+            <p class="count"><strong id="contador" th:text="${#lists.size(canciones)}">0</strong> canciones</p>
+        </section>
+
+        <section class="grid" id="grid">
+
+            <article class="song" th:each="c : ${canciones}"
+                th:with="baneado=${c.usuarioFk != null and c.usuarioFk.intentos != null and c.usuarioFk.intentos >= limiteBaneo}"
+                th:classappend="${c.reportada} ? 'is-reported'" th:style="'--h:' + ${(c.id * 47) % 360}" th:attr="data-user=${c.usuarioFk != null ? #strings.toLowerCase(c.usuarioFk.user) : ''},
+                         data-estilo=${c.estiloFK != null ? c.estiloFK.nombre : ''},
+                         data-dur=${c.duracion},
+                         data-reportada=${c.reportada}">
+
+                <div class="cover">
+                    <div class="vinyl"><span></span></div>
+
+                    <img class="avatar"
+                        th:if="${c.usuarioFk != null and c.usuarioFk.foto != null and !c.usuarioFk.foto.isEmpty()}"
+                        th:src="@{'/imagenes/' + ${c.usuarioFk.foto}}" th:alt="'Subida por ' + ${c.usuarioFk.user}"
+                        th:title="'Subida por ' + ${c.usuarioFk.user}">
+
+                    <span class="avatar avatar--vacio"
+                        th:unless="${c.usuarioFk != null and c.usuarioFk.foto != null and !c.usuarioFk.foto.isEmpty()}"
+                        title="Usuario desconocido">?</span>
+                </div>
+
+                <div class="song__body">
+                    <h2 th:text="${c.titulo}">Título</h2>
+                    <p class="song__meta">
+                        <span class="tag"
+                            th:text="${c.estiloFK != null ? c.estiloFK.nombre : 'Sin estilo'}">Estilo</span>
+                        <span class="dur" th:attr="data-seg=${c.duracion}">0:00</span>
+                        <span class="flag" th:if="${c.reportada}">Reportada</span>
+                    </p>
+                    <p class="song__user">
+                        Subida por <strong
+                            th:text="${c.usuarioFk != null ? c.usuarioFk.user : 'desconocido'}">user</strong>
+                        <span class="flag" th:if="${baneado}">· Baneado</span>
+                    </p>
+                    <p class="song__desc" th:text="${c.descripcion}">Descripción</p>
+                </div>
+
+                <div class="song__actions">
+                    <a class="btn btn--play" th:href="${c.enlace}" target="_blank"
+                        rel="noopener noreferrer">Escuchar</a>
+
+                    <form th:action="@{/admin/canciones/borrar}" method="post"
+                        onsubmit="return confirm('¿Eliminar esta canción?')">
+                        <input type="hidden" name="id" th:value="${c.id}">
+                        <button class="btn btn--danger" type="submit">Eliminar</button>
+                    </form>
+
+                    <form th:action="@{/admin/usuarios/banear}" method="post"
+                        th:if="${c.usuarioFk != null and !baneado and c.usuarioFk.id != user_logged.id}"
+                        onsubmit="return confirm('¿Banear a este usuario?')">
+                        <input type="hidden" name="id" th:value="${c.usuarioFk.id}">
+                        <button class="btn btn--danger" type="submit">Banear usuario</button>
+                    </form>
+                </div>
+            </article>
+
+        </section>
+
+        <p class="empty" id="vacio" th:hidden="${!#lists.isEmpty(canciones)}">
+            No hay canciones que coincidan con los filtros.
+        </p>
+    </main>
+
+    <script>
+        // Duración: segundos -> m:ss
+        document.querySelectorAll('.dur').forEach(el => {
+            const s = parseInt(el.dataset.seg, 10) || 0;
+            el.textContent = Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0');
+        });
+
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Bar Labea · Modificar canción</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Instrument+Sans:wght@400;500;600&display=swap"
+        rel="stylesheet">
+
+    <link rel="stylesheet" th:href="@{/styles/cancion.css}">
+</head>
+
+<body>
+
+    <nav class="topbar" aria-label="Navegación">
+        <a class="topbar__perfil" th:href="@{/canciones}" title="Volver a las canciones">
+            <span class="topbar__user">← Canciones</span>
+        </a>
+    </nav>
+
+    <header class="hero">
+        <div class="hero__text">
+            <h1>Retocar<br>la canción</h1>
+            <p>Corrige el título, el enlace o el estilo de <strong th:text="${cancion.titulo}">Título</strong>.</p>
+        </div>
+        <div class="vinyl vinyl--hero" aria-hidden="true"><span></span></div>
+    </header>
+
+    <main class="library">
+
+        <p class="aviso" th:if="${f_mensaje != null}" th:text="${f_mensaje}">Mensaje</p>
+
+        <section class="edit">
+            <form th:action="@{/canciones/modificar}" method="post" class="edit__form">
+
+                <h2>Modificar canción</h2>
+
+                <input type="hidden" name="id" th:value="${cancion.id}">
+                <input type="hidden" name="reportada" th:value="${cancion.reportada}">
+
+                <label>Título
+                    <input type="text" name="titulo" required maxlength="120" th:value="${cancion.titulo}">
+                </label>
+
+                <label>Enlace
+                    <input type="url" name="enlace" required placeholder="https://" th:value="${cancion.enlace}">
+                </label>
+
+                <div class="row">
+                    <label>Duración (segundos)
+                        <input type="number" name="duracion" min="1" required th:value="${cancion.duracion}">
+                    </label>
+                    <label>Estilo
+                        <select name="estiloFK.id" required>
+                            <option value="" disabled>Elige uno</option>
+                            <option th:each="e : ${estilos}" th:value="${e.id}" th:text="${e.nombre}"
+                                th:selected="${cancion.estiloFK != null and cancion.estiloFK.id == e.id}">Rock</option>
+                        </select>
+                    </label>
+                </div>
+
+                <label>Descripción
+                    <textarea name="descripcion" rows="3" maxlength="300" th:text="${cancion.descripcion}"></textarea>
+                </label>
+
+                <div class="modal__buttons">
+                    <a class="btn btn--ghost" th:href="@{/canciones}">Cancelar</a>
+                    <button type="submit" class="btn btn--primary">Guardar cambios</button>
+                </div>
+            </form>
+        </section>
+
+    </main>
+
+</body>
+
+</html>

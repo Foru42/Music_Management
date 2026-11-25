@@ -1,0 +1,57 @@
+{"properties": [
+  {
+    "name": "api.usuarios",
+    "type": "java.lang.String",
+    "description": "A description for 'api.usuarios'"
+  },
+  {
+    "name": "api.login",
+    "type": "java.lang.String",
+    "description": "A description for 'api.login'"
+  },
+  {
+    "name": "jwt.secret",
+    "type": "java.lang.String",
+    "description": "A description for 'jwt.secret'"
+  },
+  {
+    "name": "api.preguntas",
+    "type": "java.lang.String",
+    "description": "A description for 'api.preguntas'"
+  },
+  {
+    "name": "api.preguntasRespuestas",
+    "type": "java.lang.String",
+    "description": "A description for 'api.preguntasRespuestas'"
+  },
+  {
+    "name": "api.canciones",
+    "type": "java.lang.String",
+    "description": "A description for 'api.canciones'"
+  },
+  {
+    "name": "api.estilos",
+    "type": "java.lang.String",
+    "description": "A description for 'api.estilos'"
+  },
+  {
+    "name": "api.cancion.mp3",
+    "type": "java.lang.String",
+    "description": "A description for 'api.cancion.mp3'"
+  },
+  {
+    "name": "app.ffmpeg.path",
+    "type": "java.lang.String",
+    "description": "A description for 'app.ffmpeg.path'"
+  },
+  {
+    "name": "ytdlp.path",
+    "type": "java.lang.String",
+    "description": "A description for 'ytdlp.path'"
+  },
+  {
+    "name": "ffmpeg.location",
+    "type": "java.lang.String",
+    "description": "A description for 'ffmpeg.location'"
+  }
+]}

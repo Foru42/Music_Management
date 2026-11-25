@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Bar Labea · Canciones</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Instrument+Sans:wght@400;500;600&display=swap"
+        rel="stylesheet">
+
+    <link rel="stylesheet" th:href="@{/styles/cancion.css}">
+</head>
+
+<body>
+
+    <nav class="topbar" aria-label="Usuario">
+        <a class="topbar__perfil" th:href="@{/usuario/perfil}" title="Modificar mi perfil">
+            <span class="topbar__user" th:text="${user_logged.user}">usuario</span>
+
+            <img class="topbar__foto" th:if="${user_logged.foto != null and !#strings.isEmpty(user_logged.foto)}"
+                th:src="@{'/imagenes/' + ${user_logged.foto}}" alt="Mi foto de perfil">
+
+            <span class="topbar__foto topbar__foto--vacio"
+                th:unless="${user_logged.foto != null and !#strings.isEmpty(user_logged.foto)}"
+                th:text="${session.f_user != null ? #strings.toUpperCase(#strings.substring(session.f_user, 0, 1)) : '?'}">?</span>
+        </a>
+    </nav>
+
+    <header class="hero">
+        <div class="hero__text">
+            <h1>La rocola<br>de Labea</h1>
+            <p>Todas las canciones del bar, en un solo sitio. Añade, busca y reporta lo que no debería sonar.</p>
+            <button class="btn btn--primary" type="button" id="abrirForm">Añadir canción</button>
+        </div>
+        <div class="vinyl vinyl--hero" aria-hidden="true"><span></span></div>
+    </header>
+
+    <main class="library">
+
+        <section class="converter">
+            <form class="converter__form" th:action="@{/canciones/mp3}" method="post">
+                <label for="ytUrl">YouTube a MP3</label>
+                <div class="converter__row">
+                    <input type="url" id="ytUrl" name="url" required autocomplete="off"
+                        placeholder="https://www.youtube.com/watch?v=...">
+                    <button class="btn btn--primary" type="submit">Convertir</button>
+                </div>
+                <p class="converter__msg is-error" th:if="${f_mensaje != null}" th:text="${f_mensaje}">Mensaje</p>
+            </form>
+        </section>
+
+        <section class="grid" id="grid">
+
+            <article class="song" th:each="c : ${canciones}" th:classappend="${c.reportada} ? 'is-reported'"
+                th:style="'--h:' + ${(c.id * 47) % 360}" th:attr="data-titulo=${#strings.toLowerCase(c.titulo)},
+                         data-desc=${#strings.toLowerCase(c.descripcion)},
+                         data-estilo=${c.estiloFK != null ? c.estiloFK.nombre : ''}">
+
+                <div class="cover">
+                    <div class="vinyl"><span></span></div>
+
+                    <img class="avatar"
+                        th:if="${c.usuarioFk != null and c.usuarioFk.foto != null and !c.usuarioFk.foto.isEmpty()}"
+                        th:src="@{'/imagenes/' + ${c.usuarioFk.foto}}" th:alt="'Subida por ' + ${c.usuarioFk.user}"
+                        th:title="'Subida por ' + ${c.usuarioFk.user}">
+
+                    <p class="song__desc" th:text="${c.usuarioFk.user}">Descripción</p>
+
+                    <span class="avatar avatar--vacio"
+                        th:unless="${c.usuarioFk != null and c.usuarioFk.foto != null and !c.usuarioFk.foto.isEmpty()}"
+                        th:title="${c.usuarioFk != null} ? 'Subida por ' + ${c.usuarioFk.user} : 'Usuario desconocido'">?</span>
+
+                </div>
+
+                <div class="song__body">
+                    <h2 th:text="${c.titulo}">Título</h2>
+                    <p class="song__meta">
+                        <span class="tag"
+                            th:text="${c.estiloFK != null ? c.estiloFK.nombre : 'Sin estilo'}">Estilo</span>
+                        <span class="dur" th:attr="data-seg=${c.duracion}">0:00</span>
+                        <span class="flag" th:if="${c.reportada}">Reportada</span>
+                    </p>
+                    <p class="song__desc" th:text="${c.descripcion}">Descripción</p>
+                </div>
+
+
+                <div class="song__actions">
+                    <a class="btn btn--play" th:href="${c.enlace}" target="_blank"
+                        rel="noopener noreferrer">Escuchar</a>
+
+                    <form th:action="@{/canciones/{id}/reportar(id=${c.id})}" method="post" th:unless="${c.reportada}">
+                        <button class="btn btn--ghost" type="submit">Reportar</button>
+                    </form>
+
+                    <a class="btn btn--danger" th:href="@{/canciones/modificar(id=${c.id})}"
+                        onclick="return confirm('Modificar esta canción?')">
+                        Modificar
+                    </a>
+
+                </div>
+            </article>
+
+        </section>
+
+        <p class="empty" id="vacio" th:hidden="${!#lists.isEmpty(canciones)}">
+            No hay canciones que coincidan. Prueba con otra búsqueda o añade una nueva.
+        </p>
+    </main>
+
+    <dialog id="modal" class="modal">
+        <form th:action="@{/canciones/nueva}" method="post" class="modal__form">
+            <h2>Nueva canción</h2>
+
+            <label>Título
+                <input type="text" name="titulo" required maxlength="120">
+            </label>
+
+            <label>Enlace
+                <input type="url" name="enlace" required placeholder="https://">
+            </label>
+
+            <div class="row">
+                <label>Duración (segundos)
+                    <input type="number" name="duracion" min="1" required>
+                </label>
+                <label>Estilo
+                    <select name="estiloFK.id" required>
+                        <option value="" disabled selected>Elige uno</option>
+                        <option th:each="e : ${estilos}" th:value="${e.id}" th:text="${e.nombre}">Rock</option>
+                    </select>
+                </label>
+            </div>
+
+            <label>Descripción
+                <textarea name="descripcion" rows="3" maxlength="300"></textarea>
+            </label>
+
+            <div class="modal__buttons">
+                <button type="button" class="btn btn--ghost" id="cerrarForm">Cancelar</button>
+                <button type="submit" class="btn btn--primary">Guardar canción</button>
+            </div>
+        </form>
+    </dialog>
+
+    <script>
+        // Duración: segundos -> m:ss
+        document.querySelectorAll('.dur').forEach(el => {
+            const s = parseInt(el.dataset.seg, 10) || 0;
+            el.textContent = Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0');
+        });
+
+        // Modal
+        const modal = document.getElementById('modal');
+        document.getElementById('abrirForm').addEventListener('click', () => modal.showModal());
+        document.getElementById('cerrarForm').addEventListener('click', () => modal.close());
+        modal.addEventListener('click', e => { if (e.target === modal) modal.close(); });
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Bar Labea · Gestionar usuarios</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Instrument+Sans:wght@400;500;600&display=swap"
+        rel="stylesheet">
+
+    <link rel="stylesheet" th:href="@{/styles/cancion.css}">
+</head>
+
+<body>
+
+    <nav class="topbar topbar--split" aria-label="Navegación">
+        <a class="topbar__perfil" th:href="@{/admin}" title="Volver al menú">
+            <span class="topbar__user">← Menú</span>
+        </a>
+
+        <a class="topbar__perfil" th:href="@{/usuario/perfil}" title="Modificar mi perfil">
+            <span class="topbar__user" th:text="${user_logged.user}">admin</span>
+
+            <img class="topbar__foto" th:if="${user_logged.foto != null and !#strings.isEmpty(user_logged.foto)}"
+                th:src="@{'/imagenes/' + ${user_logged.foto}}" alt="Mi foto de perfil">
+
+            <span class="topbar__foto topbar__foto--vacio"
+                th:unless="${user_logged.foto != null and !#strings.isEmpty(user_logged.foto)}"
+                th:text="${#strings.toUpperCase(#strings.substring(user_logged.user, 0, 1))}">?</span>
+        </a>
+    </nav>
+
+    <header class="hero hero--compacto">
+        <div class="hero__text">
+            <h1>Gestionar<br>usuarios</h1>
+            <p>Consulta quién hay en el bar, qué rol tiene y controla su acceso.</p>
+        </div>
+        <div class="vinyl vinyl--hero" aria-hidden="true"><span></span></div>
+    </header>
+
+    <main class="library">
+
+        <p class="aviso" th:if="${f_mensaje != null}" th:text="${f_mensaje}">Mensaje</p>
+
+        <section class="toolbar" aria-label="Filtros">
+            <input type="search" id="buscador" placeholder="Buscar por nombre de usuario" aria-label="Buscar usuarios">
+            <p class="count"><strong id="contador" th:text="${#lists.size(usuarios)}">0</strong> usuarios</p>
+        </section>
+
+        <section class="grid" id="grid">
+
+            <article class="song" th:each="u : ${usuarios}" th:with="baneado=${u.rolFK != null and u.rolFK.id == 4},
+         esAdmin=${u.rolFK != null and u.rolFK.id == 1},
+         esYo=${u.id == user_logged.id}" th:classappend="${baneado} ? 'is-reported'"
+                th:style="'--h:' + ${(u.id * 47) % 360}" th:attr="data-user=${#strings.toLowerCase(u.user)}">
+
+                <div class="cover">
+                    <img class="user__foto" th:if="${u.foto != null and !#strings.isEmpty(u.foto)}"
+                        th:src="@{'/imagenes/' + ${u.foto}}" th:alt="'Foto de ' + ${u.user}">
+
+                    <span class="user__foto user__foto--vacio"
+                        th:unless="${u.foto != null and !#strings.isEmpty(u.foto)}"
+                        th:text="${#strings.toUpperCase(#strings.substring(u.user, 0, 1))}">?</span>
+                </div>
+
+                <div class="song__body">
+                    <h2 th:text="${u.user}">usuario</h2>
+                    <p class="song__meta">
+                        <span class="tag" th:switch="${u.rolFK != null ? u.rolFK.id : 0}">
+                            <span th:case="1">Administrador</span>
+                            <span th:case="2">Usuario</span>
+                            <span th:case="3">Bloqueado</span>
+                            <span th:case="4">Baneado</span>
+                            <span th:case="0">Sin rol</span>
+                            <span th:case="*" th:text="'Rol ' + ${u.rolFK.id}">Rol</span>
+                        </span>
+
+                        <span class="flag" th:if="${baneado}">Baneado</span>
+                        <span th:if="${esYo}">Tú</span>
+                    </p>
+                    <p class="song__desc" th:text="'Intentos fallidos: ' + ${u.intentos != null ? u.intentos : 0}">
+                        Intentos</p>
+                </div>
+
+                <div class="song__actions">
+
+                    <form th:if="${baneado and !esAdmin and !esYo}" th:action="@{/admin/usuarios/desbanear}"
+                        method="post" onsubmit="return confirm('¿Desbanear a este usuario?')">
+
+                        <input type="hidden" name="id" th:value="${u.id}">
+
+                        <button class="btn btn--ghost" type="submit">
+                            Desbanear
+                        </button>
+                    </form>
+
+                    <form th:if="${!baneado and !esAdmin and !esYo}" th:action="@{/admin/usuarios/banear}" method="post"
+                        onsubmit="return confirm('¿Banear a este usuario?')">
+
+                        <input type="hidden" name="id" th:value="${u.id}">
+                        <input type="hidden" name="origen" value="usuarios">
+
+                        <button class="btn btn--danger" type="submit">
+                            Banear
+                        </button>
+                    </form>
+
+                    <span class="song__desc" th:if="${esAdmin}">
+                        Administrador protegido
+                    </span>
+
+                    <span class="song__desc" th:if="${esYo}">
+                        Tu propia cuenta
+                    </span>
+
+                </div>
+            </article>
+
+        </section>
+
+        <p class="empty" id="vacio" th:hidden="${!#lists.isEmpty(usuarios)}">
+            No hay usuarios que coincidan con la búsqueda.
+        </p>
+    </main>
+
+    <script>
+        const buscador = document.getElementById('buscador');
+        const tarjetas = [...document.querySelectorAll('.song')];
+        const contador = document.getElementById('contador');
+        const vacio = document.getElementById('vacio');
+
+        buscador.addEventListener('input', () => {
+            const q = buscador.value.trim().toLowerCase();
+            let visibles = 0;
+
+            tarjetas.forEach(t => {
+                const ok = !q || t.dataset.user.includes(q);
+                t.hidden = !ok;
+                if (ok) visibles++;
+            });
+
+            contador.textContent = visibles;
+            vacio.hidden = visibles > 0;
+        });
+    </script>
+
+</body>
+
+</html>

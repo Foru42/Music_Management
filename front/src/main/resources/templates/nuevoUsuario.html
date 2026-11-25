@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bar Labea · Crear cuenta</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Instrument+Sans:wght@400;500;600&display=swap"
+        rel="stylesheet">
+
+    <link rel="stylesheet" th:href="@{/styles/style.css}">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.2.0/crypto-js.min.js"></script>
+
+
+</head>
+
+<body>
+
+    <main class="register">
+        <section class="login__panel">
+            <div class="register-layout">
+
+                <!-- IZQUIERDA: DATOS DEL USUARIO -->
+                <div class="login__box">
+
+                    <h1 class="login__title">Crear cuenta</h1>
+                    <p class="login__intro">Únete a Bar Labea y empieza a disfrutar de tu música.</p>
+
+                    <form id="registro" class="form formulario" th:action="@{/usuario/insertar}" method="post"
+                        enctype="multipart/form-data" onsubmit="return validarFormulario()">
+
+                        <div class="field">
+                            <label for="nombre">Nombre de usuario</label>
+                            <input type="text" id="nombre" name="user" autocomplete="username" maxlength="45"
+                                placeholder="Elige tu nombre de usuario" required>
+                        </div>
+
+                        <div class="field">
+                            <label for="password">Contraseña</label>
+                            <div class="field__password">
+                                <input type="password" id="password" autocomplete="new-password"
+                                    placeholder="Crea una contraseña" required>
+                                <button type="button" class="field__toggle" data-target="password">Ver</button>
+                            </div>
+                            <input type="hidden" id="passHash" name="pass">
+                        </div>
+
+                        <div class="field">
+                            <label for="confirmarPassword">Confirmar contraseña</label>
+                            <div class="field__password">
+                                <input type="password" id="confirmarPassword" autocomplete="new-password"
+                                    placeholder="Repite la contraseña" required>
+                                <button type="button" class="field__toggle" data-target="confirmarPassword">Ver</button>
+                            </div>
+                        </div>
+
+                        <div class="field">
+                            <label for="archivoFoto">Foto (opcional)</label>
+                            <input type="file" id="archivoFoto" name="archivoFoto"
+                                accept="image/jpeg,image/png,image/webp">
+                        </div>
+
+                        <p class="form__error" id="clientError" role="alert" hidden></p>
+                        <p class="form__error" role="alert" th:if="${error != null}" th:text="${error}"></p>
+
+                        <button type="submit" class="btn">Crear cuenta</button>
+                    </form>
+
+                    <p class="login__alt">
+                        ¿Ya tienes cuenta?
+                        <a th:href="@{/}" class="link link--strong">Inicia sesión</a>
+                    </p>
+                </div>
+
+                <!-- DERECHA: PREGUNTAS DE SEGURIDAD -->
+                <aside class="qpanel">
+
+                    <h2 class="qpanel__title">Preguntas de seguridad</h2>
+                    <p class="qpanel__intro">
+                        Selecciona tres preguntas diferentes y escribe una respuesta para cada una.
+                    </p>
+
+                    <div class="question-card" th:each="i : ${#numbers.sequence(0, 2)}">
+                        <h3 class="question-card__title">
+                            <span class="question-number" th:text="${i + 1}"></span>
+                            <span th:text="|Pregunta ${i + 1}|"></span>
+                        </h3>
+
+                        <div class="field">
+                            <label th:for="|pregunta${i}|">Pregunta</label>
+                            <select th:id="|pregunta${i}|" th:name="|preguntas[${i}].preguntaId|" form="registro"
+                                class="question-select" required>
+                                <option value="">Selecciona una pregunta</option>
+                                <option th:each="p : ${preguntas}" th:value="${p.id}" th:text="${p.texto}"></option>
+                            </select>
+                        </div>
+
+                        <div class="field">
+                            <label th:for="|respuesta${i}|">Tu respuesta</label>
+                            <input type="text" th:id="|respuesta${i}|" form="registro" class="question-answer"
+                                maxlength="200" placeholder="Escribe tu respuesta" autocomplete="off" required>
+                            <input type="hidden" class="question-hash" th:name="|preguntas[${i}].respuesta|"
+                                form="registro">
+                        </div>
+                    </div>
+
+                    <p id="qError" class="qpanel__error" role="alert" hidden></p>
+                </aside>
+
+            </div>
+        </section>
+    </main>
+
+    <script>
+        const password = document.getElementById('password');
+        const confirmarPassword = document.getElementById('confirmarPassword');
+        const passHash = document.getElementById('passHash');
+        const clientError = document.getElementById('clientError');
+        const qError = document.getElementById('qError');
+        const selects = [...document.querySelectorAll('.question-select')];
+
+        // Ver / ocultar contraseña
+        document.querySelectorAll('.field__toggle').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const input = document.getElementById(btn.dataset.target);
+                const mostrar = input.type === 'password';
+                input.type = mostrar ? 'text' : 'password';
+                btn.textContent = mostrar ? 'Ocultar' : 'Ver';
+            });
+        });
+
+        function actualizarPreguntas() {
+            selects.forEach(select => {
+                [...select.options].forEach(option => {
+                    option.disabled = option.value !== '' &&
+                        selects.some(otro => otro !== select && otro.value === option.value);
+                });
+            });
+            qError.hidden = true;
+        }
+
+        selects.forEach(select => select.addEventListener('change', actualizarPreguntas));
+
+        function mostrarError(elemento, texto) {
+            elemento.textContent = texto;
+            elemento.hidden = false;
+            return false;
+        }
+
+        function validarFormulario() {
+            clientError.hidden = true;
+            qError.hidden = true;
+
+            if (password.value.trim() === '') {
+                return mostrarError(clientError, 'Introduce una contraseña.');
+            }
+
+            if (password.value !== confirmarPassword.value) {
+                return mostrarError(clientError, 'Las contraseñas no coinciden.');
+            }
+
+            if (new Set(selects.map(s => s.value)).size !== 3) {
+                return mostrarError(qError, 'Selecciona tres preguntas diferentes.');
+            }
+
+            const respuestas = document.querySelectorAll('.question-answer');
+            if ([...respuestas].some(input => input.value.trim() === '')) {
+                return mostrarError(qError, 'Escribe una respuesta para cada pregunta.');
+            }
+
+            const normalizar = texto => texto.trim().toLowerCase();
+
+            document.querySelectorAll('.question-answer').forEach(input => {
+                const oculto = input.parentElement.querySelector('.question-hash');
+                oculto.value = CryptoJS.SHA256(normalizar(input.value) + 'Galea').toString(CryptoJS.enc.Hex);
+            });
+
+            passHash.value = CryptoJS.SHA256(password.value + 'Galea').toString(CryptoJS.enc.Hex);
+            return true;
+        }
+    </script>
+
+</body>
+
+</html>

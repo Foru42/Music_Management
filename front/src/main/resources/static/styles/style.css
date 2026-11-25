@@ -1,0 +1,408 @@
+:root {
+    --enamel: #1d4a3a;
+    --enamel-deep: #153629;
+    --brick: #9b2d20;
+    --brick-dark: #7d2218;
+    --brass: #e9c46a;
+    --chalk: #f1f3ef;
+    --ink: #17201b;
+    --muted: #55625a;
+    --line: #cfd6cf;
+    --font-display: "Bricolage Grotesque", "Trebuchet MS", system-ui, sans-serif;
+    --font-body: "Instrument Sans", system-ui, -apple-system, "Segoe UI", sans-serif
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box
+}
+
+html {
+    height: 100%
+}
+
+body {
+    margin: 0;
+    min-height: 100%;
+    font-family: var(--font-body);
+    color: var(--ink);
+    line-height: 1.5;
+    background: radial-gradient(900px 500px at 100% -10%, rgba(233, 196, 106, .22), transparent 60%), radial-gradient(700px 500px at -10% 110%, rgba(29, 74, 58, .12), transparent 60%), var(--chalk)
+}
+
+/* ---------- Login / Registro ---------- */
+.login {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: minmax(320px, 5fr) 6fr
+}
+
+.login__panel {
+    display: grid;
+    place-items: center;
+    padding: 2.5rem 1.5rem
+}
+
+.login__box {
+    width: 100%;
+    max-width: 25rem;
+    background: #fff;
+    border: 1px solid var(--line);
+    border-top: 5px solid var(--brass);
+    border-radius: 20px;
+    padding: 2.5rem 2rem;
+    box-shadow: 0 20px 50px -20px rgba(21, 54, 41, .35)
+}
+
+.login__title {
+    margin: 0 0 .35rem;
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: clamp(2.2rem, 5vw, 3.2rem);
+    line-height: 1;
+    letter-spacing: -.03em;
+    color: var(--enamel)
+}
+
+.login__intro {
+    margin: 0 0 1.75rem;
+    color: var(--muted)
+}
+
+.login__alt {
+    margin: 1.75rem 0 0;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--line);
+    color: var(--muted);
+    font-size: .95rem
+}
+
+/* ---------- Formulario ---------- */
+.form {
+    display: grid;
+    gap: 1.15rem
+}
+
+.field {
+    display: grid;
+    gap: .4rem
+}
+
+.field label {
+    font-weight: 600;
+    font-size: .95rem
+}
+
+.field input {
+    width: 100%;
+    font: inherit;
+    color: inherit;
+    padding: .8rem .95rem;
+    background: #fbfcfb;
+    border: 2px solid var(--line);
+    border-radius: 12px;
+    transition: border-color .15s, box-shadow .15s, background .15s
+}
+
+.field input::placeholder {
+    color: #8a958e
+}
+
+.field input:hover {
+    border-color: #aab4ad
+}
+
+.field input:focus-visible {
+    outline: none;
+    background: #fff;
+    border-color: var(--enamel);
+    box-shadow: 0 0 0 4px rgba(233, 196, 106, .55)
+}
+
+.field select {
+    width: 100%;
+    font: inherit;
+    color: inherit;
+    padding: .8rem 2.6rem .8rem .95rem;
+    background: #fbfcfb url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none' stroke='%231d4a3a' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 8l5 5 5-5'/%3E%3C/svg%3E") no-repeat right .8rem center/1.1rem;
+    border: 2px solid var(--line);
+    border-radius: 12px;
+    appearance: none;
+    cursor: pointer;
+    transition: border-color .15s, box-shadow .15s, background-color .15s
+}
+
+.field select:hover {
+    border-color: #aab4ad
+}
+
+.field select:focus-visible {
+    outline: none;
+    background-color: #fff;
+    border-color: var(--enamel);
+    box-shadow: 0 0 0 4px rgba(233, 196, 106, .55)
+}
+
+.field__password {
+    position: relative
+}
+
+.field__password input {
+    padding-right: 4.8rem
+}
+
+.field__toggle {
+    position: absolute;
+    top: 50%;
+    right: .5rem;
+    transform: translateY(-50%);
+    font: inherit;
+    font-size: .875rem;
+    font-weight: 600;
+    color: var(--enamel);
+    background: none;
+    border: 0;
+    padding: .35rem .6rem;
+    border-radius: 8px;
+    cursor: pointer
+}
+
+.field__toggle:hover {
+    background: var(--chalk)
+}
+
+.field__toggle:focus-visible {
+    outline: 3px solid var(--brass)
+}
+
+.form__error,
+.form__status {
+    margin: 0;
+    padding: .7rem .9rem;
+    font-size: .925rem;
+    border-radius: 8px
+}
+
+.form__error {
+    color: var(--brick-dark);
+    background: #f8e3df;
+    border-left: 4px solid var(--brick)
+}
+
+.form__status {
+    color: var(--enamel-deep);
+    background: #fbf3dc;
+    border-left: 4px solid var(--brass)
+}
+
+/* ---------- Botones y enlaces ---------- */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: .5rem;
+    font: inherit;
+    font-weight: 600;
+    font-size: 1.05rem;
+    color: #fff;
+    text-decoration: none;
+    background: var(--brick);
+    border: 0;
+    border-radius: 12px;
+    padding: .9rem 1.4rem;
+    cursor: pointer;
+    box-shadow: 0 8px 18px -8px rgba(155, 45, 32, .7);
+    transition: background .15s, transform .1s, box-shadow .15s
+}
+
+.btn:hover {
+    background: var(--brick-dark);
+    box-shadow: 0 10px 22px -8px rgba(155, 45, 32, .8)
+}
+
+.btn:active {
+    transform: translateY(1px)
+}
+
+.btn:focus-visible {
+    outline: 3px solid var(--brass);
+    outline-offset: 3px
+}
+
+.link {
+    color: var(--enamel);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    text-decoration-thickness: 1px
+}
+
+.link:hover {
+    color: var(--brick)
+}
+
+.link:focus-visible {
+    outline: 3px solid var(--brass);
+    outline-offset: 2px;
+    border-radius: 3px
+}
+
+.link--strong {
+    font-weight: 600
+}
+
+/* ---------- Registro: layout y panel de preguntas ---------- */
+.register-layout {
+    width: 100%;
+    max-width: 76rem
+}
+
+.register-layout .login__box {
+    max-width: none;
+    min-width: 0
+}
+
+.qpanel {
+    width: 100%;
+    display: grid;
+    align-content: start;
+    gap: 1rem
+}
+
+.qpanel__title {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 1.4rem;
+    color: var(--enamel)
+}
+
+.qpanel__intro {
+    margin: 0
+}
+
+@media (max-width:1100px) {
+    .qpanel {
+        margin-top: 1.5rem
+    }
+}
+
+@media (max-width:850px) {
+    .register-layout {
+        max-width: 38rem
+    }
+}
+
+/* ---------- Móvil ---------- */
+@media (max-width:760px) {
+    .login {
+        grid-template-columns: 1fr
+    }
+
+    .login__panel {
+        padding: 2rem 1rem 3rem;
+        align-items: start
+    }
+
+    .login__box {
+        padding: 2rem 1.5rem
+    }
+}
+
+@media (prefers-reduced-motion:reduce) {
+
+    .btn,
+    .field input {
+        transition: none
+    }
+}
+
+.register-layout {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(300px, 1fr));
+    gap: 24px;
+    align-items: start;
+    width: 100%;
+}
+
+.qpanel {
+    padding: 28px;
+    border-radius: 18px;
+    background: #fff;
+    border: 1px solid #e5e5e5;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.06);
+}
+
+.qpanel__title {
+    margin: 0 0 8px;
+}
+
+.qpanel__intro {
+    margin-bottom: 22px;
+    line-height: 1.5;
+    color: #666;
+}
+
+.question-card {
+    padding: 16px;
+    margin-bottom: 16px;
+    border: 1px solid #e5e5e5;
+    border-radius: 12px;
+    background: #fafafa;
+}
+
+.question-card__title {
+    margin: 0 0 14px;
+    font-size: 1rem;
+}
+
+.question-number {
+    display: inline-flex;
+    width: 27px;
+    height: 27px;
+    align-items: center;
+    justify-content: center;
+    margin-right: 7px;
+    border-radius: 50%;
+    background: #eee;
+}
+
+.qpanel select,
+.qpanel input {
+    box-sizing: border-box;
+    width: 100%;
+    padding: 11px 12px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background: #fff;
+    font: inherit;
+}
+
+.qpanel .field {
+    margin-bottom: 12px;
+}
+
+.qpanel .field:last-child {
+    margin-bottom: 0;
+}
+
+.qpanel label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 600;
+}
+
+.qpanel__error {
+    margin-top: 12px;
+    color: #b42318;
+    font-size: 0.9rem;
+}
+
+[hidden] {
+    display: none !important;
+}
+
+@media (max-width: 800px) {
+    .register-layout {
+        grid-template-columns: 1fr;
+    }
+}

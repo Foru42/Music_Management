@@ -9,8 +9,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.musika.backend.model.Preguntas;
-import com.musika.backend.model.Usuarios;
-import com.musika.backend.repository.PreguntasRepository;
 import com.musika.backend.service.PreguntaService;
 
 @RestController

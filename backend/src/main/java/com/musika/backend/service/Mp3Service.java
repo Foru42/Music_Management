@@ -37,19 +37,19 @@ public class Mp3Service {
 
         List<String> cmd = new ArrayList<>();
         cmd.add(ytdlpPath);
-        cmd.add("-x"); // extraer solo audio
+        cmd.add("-x");
         cmd.add("--audio-format");
         cmd.add("mp3");
         cmd.add("--audio-quality");
-        cmd.add("0"); // mejor calidad VBR
-        cmd.add("--no-playlist"); // solo el vídeo, no la lista
+        cmd.add("0");
+        cmd.add("--no-playlist");
 
         cmd.add("--embed-thumbnail");
         cmd.add("--embed-metadata");
         cmd.add("--convert-thumbnails");
-        cmd.add("jpg"); // YouTube da webp, que muchos reproductores no leen
+        cmd.add("jpg");
         cmd.add("--ppa");
-        cmd.add("ThumbnailsConvertor:-vf crop=ih:ih"); // recorta la imagen 16:9 a cuadrada
+        cmd.add("ThumbnailsConvertor:-vf crop=ih:ih");
 
         cmd.add("-o");
         cmd.add(dir.resolve("%(title).150s.%(ext)s").toString());
@@ -57,14 +57,13 @@ public class Mp3Service {
             cmd.add("--ffmpeg-location");
             cmd.add(ffmpegLocation);
         }
-        cmd.add("--"); // lo siguiente nunca se interpreta como opción
+        cmd.add("--");
         cmd.add(url);
 
         Process proceso = new ProcessBuilder(cmd)
                 .redirectErrorStream(true)
                 .start();
 
-        // Hay que leer la salida o el proceso puede bloquearse
         String salida = new String(proceso.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
 
         if (!proceso.waitFor(TIMEOUT_MINUTOS, TimeUnit.MINUTES)) {
@@ -89,7 +88,6 @@ public class Mp3Service {
         try {
             borrarDirectorio(archivo.getParent());
         } catch (IOException e) {
-            // Aquí podrías loguearlo
         }
     }
 

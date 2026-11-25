@@ -155,7 +155,7 @@ public class CancionesController {
                 model.addAttribute("f_mensaje", "La cancion no existe.");
                 return "redirect:/canciones";
             }
-            System.out.println("HEyy");
+
             model.addAttribute("estilos", estiService.obtenerTodos(token));
             model.addAttribute("cancion", cancion);
 
@@ -254,7 +254,7 @@ public class CancionesController {
                 session.invalidate();
                 return "redirect:/";
             }
-            System.out.println(e);
+
             redirect.addFlashAttribute("f_mensaje", "No se ha podido convertir el enlace");
 
         } catch (RestClientException e) {

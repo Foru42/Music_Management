@@ -7,8 +7,6 @@ import com.musika.front.model.Usuario;
 public interface UsuarioService {
     List<Usuario> obtenerTodos(String token);
 
-    // public Usuario obtenerOrdenadorById(String token, Integer id);
-
     Usuario insertar(Usuario aut);
 
     Usuario obtenerUsuarioByName(String token, String nombre);
@@ -21,5 +19,4 @@ public interface UsuarioService {
 
     Boolean desbannearById(String token, Integer id);
 
-    // public Boolean borrar(String token, Integer id);
 }

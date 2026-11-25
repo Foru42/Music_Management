@@ -31,3 +31,31 @@ build/
 
 ### VS Code ###
 .vscode/
+
+# Configuración local y secretos
+.env
+.env.*
+!.env.example
+
+# Compilación y configuración del IDE
+HELP.md
+target/
+.mvn/wrapper/maven-wrapper.jar
+.apt_generated/
+.classpath
+.factorypath
+.project
+.settings/
+.springBeans
+.sts4-cache/
+.idea/
+*.iws
+*.iml
+*.ipr
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+build/
+.vscode/

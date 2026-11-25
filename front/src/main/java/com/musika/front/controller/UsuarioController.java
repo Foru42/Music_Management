@@ -18,7 +18,6 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.musika.front.auxiliar.ImagenAuxiliar;
-import com.musika.front.model.Cancion;
 import com.musika.front.model.Pregunta;
 import com.musika.front.model.PreguntaRespuesta;
 import com.musika.front.model.Usuario;
@@ -73,12 +72,6 @@ public class UsuarioController {
                 model.addAttribute("error", "No se ha insertado ningún usuario.");
                 model.addAttribute("preguntas", preService.obtenerTodos());
                 return "nuevoUsuario";
-            }
-
-            for (PreguntaRespuesta r : preguntas) {
-                System.err.println("preguntaId=" + r.getPreguntaId()
-                        + " | usuarioId=" + usuarioInsertado.getId()
-                        + " | respuesta=" + r.getRespuesta());
             }
 
             if (preguntas != null) {
@@ -207,7 +200,7 @@ public class UsuarioController {
             }
             redirect.addFlashAttribute("f_mensaje", "No se ha podido actualizar el perfil");
         } catch (RestClientException e) {
-            System.out.println(e);
+
             redirect.addFlashAttribute("f_mensaje", "No se puede conectar con el servido1r");
         }
 
